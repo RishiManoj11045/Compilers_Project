@@ -145,7 +145,6 @@ void yyerror(const char* msg); // Declare the error handling function
 start: marker program main program {
                 
                         for(auto& i: symTab_list) {
-                                cout<<endl<<endl;
                                 for(auto& it: i) {
                                         delete it;
                                 }
@@ -785,40 +784,18 @@ intialisation: pt_allowed ID EQUAL inpt_rhs {
                         insert_symTab($2, $1, scope);
                 } 
              | NODE LT pt_allowed GT ID EQUAL LFB predicate COMMA n_par COMMA n_par RFB {
-                        cout<<"$$$$ : "<<$10<<" "<<scope <<endl;
-                        cout<<"-----------------------"<<endl;
                         string q = $10;
-                        for(int i=scope; i>=0; i--) {
-                                for(auto j: symTab_list[i]) {
-                                        cout<<"name: "<<j->name<<"   type: "<<j->type<<"      scope: "<<j->level<<endl;       
-                                 }
-                        }
-                        cout<<"-----------------------"<<endl;
-
-                        cout<<"rishi0 : " <<$10<<endl;
                         symTabEnt temp = search_symTab_scope($5, scope);
-                        cout<<"rishi1 : " <<$10<<endl;
-                        cout<<"-----------------------"<<endl;
-                        for(int i=scope; i>=0; i--) {
-                                for(auto j: symTab_list[i]) {
-                                   cout<<"name: "<<j->name<<"   type: "<<j->type<<"      scope: "<<j->level<<endl;       
-
-                                }
-                        }
-                        cout<<"-----------------------"<<endl;
-                        cout<<"rishi2 : " <<$10<<endl;
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
                         }
-                        cout<<"rishi3 : " <<$10<<endl;
                         if(!np_compat($3,$8)) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Type of Node value is not compatible "<<endl;
                                 exit(1);
                         }
                         $10 = q.c_str();
                         string str = $10;
-                        cout<<"$: "<<str<<endl;
                         string stemp = $3;
                         if((str!="null") && (str != ("Node<"+stemp+">") )) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Node value Type Mismatch12"<<endl;
@@ -923,7 +900,6 @@ n_par: LNULL {
                 }  
                 string s1 = temp->type;              
                 $$ = s1.c_str();
-                cout<<"$$ :  "<<$$<<endl;
      }
      ;
 
@@ -980,7 +956,6 @@ con_posm: con_pos {
                 $$ = $1;
         }
         | con_pos ops con_pos {
-                cout<<$1<<" "<<$3<<endl;
                 string ss1 = $1;
                 string ss2 = $3;
                 if(!(((ss1=="int")||(ss1=="float")||(ss1=="double")||(ss1=="long")||(ss1=="string")||(ss1=="char"))&&((ss2=="int")||(ss2=="float")||(ss2=="double")||(ss2=="long")||(ss2=="string")||(ss2=="char")))){
