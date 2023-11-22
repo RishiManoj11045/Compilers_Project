@@ -27,8 +27,6 @@ void insert_symTab(string name,string type ,int scope){
 }
 
 symTabEnt search_symTab(string name,int scope){
-    cout<<name<<" "<<scope<<endl;
-    cout<<"sumtab size"<<symTab_list.size()<<endl;
     // if(scope >= symTab_list.size()) {
     //     scope--;
     // }
@@ -39,13 +37,10 @@ symTabEnt search_symTab(string name,int scope){
             }
         }
     }
-    cout<<"sumtab size"<<symTab_list.size()<<endl;
     return NULL;
 }
 
 symTabEnt search_symTab_scope(string name,int scope){
-    cout<<name<<" "<<scope<<endl;
-    cout<<"sumtab size"<<symTab_list.size()<<endl;
     // if(scope >= symTab_list.size()) {
     //     scope--;
     // }
@@ -54,9 +49,9 @@ symTabEnt search_symTab_scope(string name,int scope){
             return j;
         }
     }
-    cout<<"sumtab size"<<symTab_list.size()<<endl;
     return NULL;
 }
+
 void delete_symEnt(int scope){
     if(scope < symTab_list.size()) {
         for(auto i: symTab_list[scope]) {
