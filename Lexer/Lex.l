@@ -6,6 +6,8 @@ FILE* fsread;
 FILE* fswrite;
 
 void HandleConst(char* str);
+void HandleComments(char* str);
+
 %}
 
 /*Definitions for common patterns (Regular expressions*/
@@ -66,7 +68,7 @@ operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|
 
 \n                 {yylineno++;} // Handle newline character
 
-{comments}         {}
+{comments}         {HandleComments(yytext);}
 
 {operator}         {fprintf(fswrite, "operator: %s\n", yytext);}
 
@@ -111,6 +113,17 @@ void HandleConst(char* str) {
         fprintf(fswrite, "constant: %s\n", str);
     }
 }
+
+void HandleComments(char* str){
+    int i=0;
+    while(str[i]!='\0'){
+        if(str[i]=='\n'){
+            yylineno++;
+            }
+        i++;
+    }
+}
+
 int main(int argc, char *argv[]) {
     //Opening input file for reading
     fsread = fopen(argv[1], "r");
