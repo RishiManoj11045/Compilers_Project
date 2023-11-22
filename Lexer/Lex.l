@@ -7,10 +7,9 @@ FILE* fswrite;
 
 void HandleConst(char* str);
 void HandleComments(char* str);
-
 %}
 
-/*Definitions for common patterns (Regular expressions*/
+/*Definitions for common patterns (Regular expressions)*/
 
 /*Matches one or more spaces or tabs*/
 space [ \t]+ 
@@ -24,15 +23,13 @@ multiline_comments #\*([^*]|[*][^#]|\n)*\*#
 
 comments ({multiline_comments}|{single_line_comments})
 
-sp_char_id ("$"|"_"|"~")
-
 /*Matches identifiers that can start with an optional special character followed by alphanumeric characters*/
 identifier [A-Za-z$_~][A-Za-z0-9$_~]*
 
 na_id   [0-9]+[A-Za-z0-9$_~]+
 
 /*Matches reserved keywords*/
-reserved_key ("if"|"else"|"return"|"switch"|"case"|"break"|"print"|"continue"|"null"|"for"|"while"|"true"|"false"|"and"|"or")
+reserved_key ("main"|"if"|"else"|"return"|"break"|"continue"|"null"|"for"|"while"|"true"|"false"|"and"|"or"|"end"|"input"|"output"|"left"|"right"|"val")
 
 /*Matches data types like "integer_", "character_", "string", or "null"*/
 p_datatype ("int"|"float"|"char"|"string"|"bool"|"void"|"double"|"long")
@@ -42,7 +39,7 @@ np_datatype ("Node"|"BSTree"|"BTree")
 datatype   ({p_datatype}|{np_datatype})
 
 /*Matches punctuation characters*/
-punctuation [,;"'.\(\)\[\]\{\}]
+punctuation [:,;"'.\(\)\[\]\{\}]
 
 /*Matches a string enclosed in double quotes*/
 string  \"[^"]*\"
@@ -62,7 +59,7 @@ decimal_number  (-?[0-9]+)
 constant     ({decimal_number}|{character}|{string}|{floating_point})
 
 /*Matches operators containing spaces, followed by one of {-, =, +, *, /, _} and then more spaces*/
-operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|"|"|"^")
+operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|"|"|"^"|"<<")
 
 %%
 
@@ -70,21 +67,22 @@ operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|
 
 {comments}         {HandleComments(yytext);}
 
+{space}            {/* */;} // Handle spaces and tabs
+
 {operator}         {fprintf(fswrite, "operator: %s\n", yytext);}
+                   
 
 {punctuation}      {fprintf(fswrite, "punctuation: %s\n", yytext);}
+                    
+{datatype}         {fprintf(fswrite, "datatype: %s\n", yytext);}
 
-{datatype}         {fprintf(fswrite, "datatype: %s\n", yytext);} // Call HandleDatatypes function for data types handling
-
-{reserved_key}     {fprintf(fswrite, "reserved keyword: %s\n", yytext);} // Call HandleKeyWords function for reserved keywords
+{reserved_key}     {fprintf(fswrite, "reserved keyword: %s\n", yytext);}
 
 {constant}         {HandleConst(yytext);} // Call HandleConst function for constants
 
-{identifier}       {fprintf(fswrite, "ID: %s\n", yytext);} // Return token type ID for identifiers
-
-{space}            {} // Handle spaces and tabs
-
-.|{na_id}           {fprintf(fswrite, "Lexical Error for %s at line number: %d\n", yytext, yylineno);
+{identifier}       {fprintf(fswrite, "ID: %s\n", yytext);}
+                        
+.|{na_id}           {printf("Lexical Error for %s at line number: %d\n", yytext, yylineno);
                     fclose(fsread);
                     fclose(fswrite);
                     exit(1);} // Handle lexical errors
@@ -113,6 +111,8 @@ void HandleConst(char* str) {
         fprintf(fswrite, "constant: %s\n", str);
     }
 }
+
+
 
 void HandleComments(char* str){
     int i=0;
