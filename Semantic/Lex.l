@@ -11,6 +11,7 @@ int HandleOps(char* str);
 int HandlePunc(char* str);
 int HandleDatatypes(char* str);
 int HandleKeyWords(char* str);
+void HandleComments(char* str);
 
 %}
 
@@ -70,7 +71,7 @@ operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|
 
 \n                 {yylineno++;} // Handle newline character
 
-{comments}         {/* */;}
+{comments}         {HandleComments(yytext);}
 
 {space}            {/* */;} // Handle spaces and tabs
 
@@ -89,10 +90,10 @@ operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|
 {constant}         {return HandleConst(yytext);} // Call HandleConst function for constants
 
 {identifier}       {fprintf(fswrite, "ID: %s\n", yytext);
-                        yylval.name=strdup(yytext);
+                        yylval.name = strdup(yytext);
                         return ID;} // Return token type ID for identifiers
 
-.|{na_id}           {fprintf(fswrite, "Lexical Error for %s at line number: %d\n", yytext, yylineno);
+.|{na_id}           {printf("Lexical Error for %s at line number: %d\n", yytext, yylineno);
                     fclose(fsread);
                     fclose(fswrite);
                     exit(1);} // Handle lexical errors
@@ -325,4 +326,14 @@ int HandleKeyWords(char* str) {
         return MAIN;
     }
     return 1;
+}
+
+void HandleComments(char* str){
+    int i=0;
+    while(str[i]!='\0'){
+        if(str[i]=='\n'){
+            yylineno++;
+            }
+        i++;
+    }
 }
