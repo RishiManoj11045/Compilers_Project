@@ -16,6 +16,8 @@ void insert_symTab(string name,string type ,int scope);
 
 symTabEnt search_symTab(string name,int scope);
 
+symTabEnt search_symTab_scope(string name,int scope);
+
 void delete_symEnt(int scope);
 
 void insert_functab(string name,bool built_in, vector<string> param_list,string ret_type);
