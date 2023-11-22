@@ -43,6 +43,20 @@ symTabEnt search_symTab(string name,int scope){
     return NULL;
 }
 
+symTabEnt search_symTab_scope(string name,int scope){
+    cout<<name<<" "<<scope<<endl;
+    cout<<"sumtab size"<<symTab_list.size()<<endl;
+    // if(scope >= symTab_list.size()) {
+    //     scope--;
+    // }
+    for(auto j: symTab_list[scope]) {
+        if(name == j->name) {
+            return j;
+        }
+    }
+    cout<<"sumtab size"<<symTab_list.size()<<endl;
+    return NULL;
+}
 void delete_symEnt(int scope){
     if(scope < symTab_list.size()) {
         for(auto i: symTab_list[scope]) {
