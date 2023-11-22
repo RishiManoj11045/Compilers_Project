@@ -1,11 +1,11 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 
 FILE* fsread;
 FILE* fswrite;
-//HI
-void HandleConst(char* str);
 
+void HandleConst(char* str);
 %}
 
 /*Definitions for common patterns (Regular expressions*/
@@ -111,7 +111,6 @@ void HandleConst(char* str) {
         fprintf(fswrite, "constant: %s\n", str);
     }
 }
-
 int main(int argc, char *argv[]) {
     //Opening input file for reading
     fsread = fopen(argv[1], "r");
