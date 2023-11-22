@@ -684,7 +684,7 @@ declaration_stmt: declaration SEMICOLON
 declaration: pt_allowed id_list {
                     symTabEnt temp = NULL;
                     for(auto &i: vec) {
-                        temp = search_symTab(i, scope);
+                        temp = search_symTab_scope(i, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
@@ -696,7 +696,7 @@ declaration: pt_allowed id_list {
            | NODE LT pt_allowed GT id_list {
                     symTabEnt temp = NULL;
                     for(auto &i: vec) {
-                        temp = search_symTab(i, scope);
+                        temp = search_symTab_scope(i, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
@@ -710,7 +710,7 @@ declaration: pt_allowed id_list {
            | BTREE LT pt_allowed GT id_list {
                     symTabEnt temp = NULL;
                     for(auto &i: vec) {
-                        temp = search_symTab(i, scope);
+                        temp = search_symTab_scope(i, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
@@ -724,7 +724,7 @@ declaration: pt_allowed id_list {
            | BSTREE LT pt_allowed GT id_list {
                     symTabEnt temp = NULL;
                     for(auto &i: vec) {
-                        temp = search_symTab(i, scope);
+                        temp = search_symTab_scope(i, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
@@ -737,7 +737,7 @@ declaration: pt_allowed id_list {
                 }
            | pt_allowed ID LSB NUMBER RSB {
                     symTabEnt temp = NULL;
-                    temp = search_symTab($2, scope);
+                    temp = search_symTab_scope($2, scope);
                     if(temp) {
                         cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                         exit(1);
@@ -748,7 +748,7 @@ declaration: pt_allowed id_list {
                 }
            | NODE LT pt_allowed GT ID LSB NUMBER RSB {
                     symTabEnt temp = NULL;
-                    temp = search_symTab($5, scope);
+                    temp = search_symTab_scope($5, scope);
                     if(temp) {
                         cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                         exit(1);
@@ -773,7 +773,7 @@ intialisation_stmt: intialisation SEMICOLON
                   ;
 
 intialisation: pt_allowed ID EQUAL inpt_rhs {
-                        symTabEnt temp = search_symTab($2, scope);
+                        symTabEnt temp = search_symTab_scope($2, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
@@ -796,7 +796,7 @@ intialisation: pt_allowed ID EQUAL inpt_rhs {
                         cout<<"-----------------------"<<endl;
 
                         cout<<"rishi0 : " <<$10<<endl;
-                        symTabEnt temp = search_symTab($5, scope);
+                        symTabEnt temp = search_symTab_scope($5, scope);
                         cout<<"rishi1 : " <<$10<<endl;
                         cout<<"-----------------------"<<endl;
                         for(int i=scope; i>=0; i--) {
@@ -833,7 +833,7 @@ intialisation: pt_allowed ID EQUAL inpt_rhs {
                         insert_symTab($5, str, scope);
                 } 
              | BTREE LT pt_allowed GT ID EQUAL LFB bt_parm RFB {
-                        symTabEnt temp = search_symTab($5, scope);
+                        symTabEnt temp = search_symTab_scope($5, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
@@ -848,7 +848,7 @@ intialisation: pt_allowed ID EQUAL inpt_rhs {
                         insert_symTab($5, str, scope);
                 } 
              | BSTREE LT pt_allowed GT ID EQUAL LFB bst_parm RFB {
-                        symTabEnt temp = search_symTab($5, scope);
+                        symTabEnt temp = search_symTab_scope($5, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
@@ -900,11 +900,12 @@ bt_par: predicate {
       ;
 
 bst_parm: predicate COMMA bst_parm {
-                $$ = $1;
                 if(!compatibility($1, $3)) {
                         cout<<"Semantic Error at line number "<<yylineno<<": Type Mismatch\n";
                         exit(1);
                 }
+                string str = bt_final_type($1,$3);
+                $$=str.c_str();
         }
         | predicate {
                 $$ = $1;        
