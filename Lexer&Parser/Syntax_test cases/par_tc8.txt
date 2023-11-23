@@ -1,0 +1,14 @@
+int miss_op(int,int);
+int miss_op(int x,int y){
+  int z;
+  z=x+z;
+  return z;
+}
+main(){
+    int a=1;
+    int b=2;
+
+  #syntax error -missing operand
+    int c = a +;
+    c=miss_op(a,b);
+}
