@@ -1,0 +1,16 @@
+void example() {
+    float pi = 3.14;
+    string greeting = "Hello, World!";
+    char initial = 'A';
+    int count = 10;
+}
+
+main() {
+    int a = 5;
+    if (a > 0) {
+        return a;
+    } else {
+        return -1;
+    }
+}
+

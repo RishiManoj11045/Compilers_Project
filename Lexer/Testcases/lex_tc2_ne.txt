@@ -1,0 +1,19 @@
+void comments(){
+#* int b #* *# *#
+
+# single line comment
+
+#* multi
+line 
+comments 
+*#
+}
+
+main()
+{
+Node<int> a = {1, null, null};
+Node<int> b = {2, null, null};
+BTree<int> c = {a, null, b};
+BSTree<int> m = {a, null, b};
+
+}

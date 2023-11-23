@@ -1,0 +1,41 @@
+int loops()
+{
+
+    Node<int> a = {1, null, null};
+    Node<int> b = {2, a, null};
+
+    int e = a.val;
+    int d = b.val;
+    for(int i=0; i<5; i++) {
+        d=i;
+        if(d == 1) {
+            d = e+5;
+            break;
+        }
+        else {
+            d = d + 2;
+            continue;
+        }
+    }
+
+    while(a.val <= b.val){
+      a.val=a.val+3;
+      b.val=a.val+1;
+    }
+    return d;
+}
+
+main()
+{
+int x = 10;
+int y = 20;
+
+if(x > y) {
+    output: "x is greater than y" << end;
+} 
+else
+{
+    output : "y is greater than x" << end ;
+}
+return 0;
+}

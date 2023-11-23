@@ -1,0 +1,19 @@
+void arithmetic() {
+    int x = 5;
+    int y = 3;
+    int sum,product,result;
+    if(x!=y)
+    {
+     sum = x + y;
+     product = x * y;
+    }
+    else
+    result = sum / product ; 
+}
+main(){
+    int ab23c;
+    int sgnjsgj809;
+    
+# Lexical error for intialization
+int 123abc;
+}
