@@ -1,0 +1,15 @@
+int value(Node<int>,Node<int>,Node<int>);
+int value(Node<int> a,Node<int> b,Node<int> c){
+    c.val=5;
+    a.val=1;
+    b.val=6;
+
+return 0;
+}
+
+main(){
+    Node<int> a = {1, null, null};
+    Node<int> c = {2, null, null};
+    Node<int> b = {2, a, c};
+    value(a,b,c);
+#parenthesis missing-syntax error

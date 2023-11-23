@@ -1,0 +1,27 @@
+int loops();
+int loops()
+{
+    Node<int> a = {1, null, null};
+    Node<int> b = {2, a, null};
+    int x=1;
+    int y=2;
+    while(x <= y){
+      x=x+3;
+      y=y+1;     
+    }
+    int d; 
+    d= x + y;
+    return d;
+}
+
+main()
+{
+int x = 10;
+int y = 20;
+#syntax error - no if is used
+else
+{
+    output : "y is greater than x" << end ;
+}
+return 0;
+}
