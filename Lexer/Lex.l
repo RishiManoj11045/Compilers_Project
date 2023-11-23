@@ -1,9 +1,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 FILE* fsread;
 FILE* fswrite;
+
+int yylineno;
 
 void HandleConst(char* str);
 void HandleComments(char* str);
