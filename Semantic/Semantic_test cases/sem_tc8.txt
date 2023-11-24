@@ -15,7 +15,8 @@ int loop() {
 
 main() {
     int y = loop();
-    int d = 0;
+    int d;
+    input(d);
     #semantic error- Usage of undeclared variable 'z'
     for (int i = 0; i < 3; i++) {
         d = y%i;
