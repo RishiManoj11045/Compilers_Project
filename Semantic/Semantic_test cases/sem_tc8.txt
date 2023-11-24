@@ -1,0 +1,31 @@
+int loop();
+int loop() {
+    Node<int> a = {1, null, null};
+    Node<int> b = {2, a, null};
+    int x = 1;
+    int y = 2;
+    while (x <= y) {
+        x = x + 3;
+        y = y + 1;
+    }
+    int d; 
+    d = x + y;        
+    return d;
+}
+
+main() {
+    int y = loop();
+    int d = 0;
+    #semantic error- Usage of undeclared variable 'z'
+    for (int i = 0; i < 3; i++) {
+        d = y%i;
+        y = i * z; //
+    }
+    if (d > 10) {
+        d = d - 10;
+    } else {
+        d = d * 2;
+    }
+
+    return 0;
+}

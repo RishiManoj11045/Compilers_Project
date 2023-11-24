@@ -1,0 +1,33 @@
+int duplicateFunction();
+#semantic error -reusing the function name
+int duplicateFunction();
+int duplicateFunction() {
+    return 42;
+}
+
+int duplicateFunction(){
+    return 43;
+}
+
+main() {
+    int x = 5;
+    int y = 3;
+    int z = x + y; 
+
+    if (z > 5.0) {
+        x = x * 2;
+    } else {
+        y = y + 1;
+    }
+
+    int index = 1;
+    int value = x + y + index;
+    int result = duplicateFunction(); 
+    bool flag = true;
+
+    while (flag) {
+        flag = false;
+    }
+
+    return 0;
+}
