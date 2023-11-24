@@ -1,0 +1,22 @@
+int func();
+int func(){
+Node<int> node1 = {1, null, null};
+Node<int> node2 = {2, node1, null};
+BTree<int> tree = {1,2,3,4,null};
+BTree<float> tree1 = {8.9,9.5,3.0,4.2,null};
+tree.inorder();
+tree1.postorder();
+}
+main(){
+int counter;
+input(counter);
+
+while (counter < 5) {
+    if (counter == 2) {
+        counter = counter + 1;
+        continue;
+    }
+    counter = counter + 2;
+}
+func();
+}
