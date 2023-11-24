@@ -1,9 +1,0 @@
-int operands(int,int);
-int operands(int x,int y){
-  int z;
-  int a;
-  z=x+y;
-  a=x/y;
-  return z
-}
-#syntax error- no main function
