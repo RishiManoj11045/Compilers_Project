@@ -1,0 +1,41 @@
+int Var = 10;
+int add(int,int);
+void printMessage();
+int add(int a, int b) {
+    {
+        {
+            int var=8;
+        }
+    }
+    int c;
+    c = a + b;
+    return c;
+}
+
+void printMessage() {
+    output: "Semantic Analysis" << end;
+}
+
+main() {
+    int x = 5;
+    int y = 3;
+    int result;
+
+    if (x > y) {
+        result = add(x, y);
+    } else {
+        result = x - y;
+    }
+
+    for (int i = 0; i < result; i++) {
+        printMessage();
+    }
+
+    while (result > 0) {
+        result = result - 1;
+    }
+
+    BTree<int> tree = {1, null, 2, 3};
+    Node<int> a = {1, null, null};
+    tree.insert(a);
+}
