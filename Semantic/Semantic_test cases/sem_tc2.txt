@@ -7,8 +7,10 @@ output: "Syntax Analysis" << end;
 tree.inorder();
 tree.postorder();
 }
+
 main(){
-int counter = 0;
+int counter;
+input(counter);
 
 while (counter < 5) {
     if (counter == 2) {
