@@ -207,7 +207,6 @@ main: MAIN LPAR RPAR {fprintf(fir, "int main()");
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-                        check_return=false;
                         }
     ;
 
@@ -446,7 +445,6 @@ func: pt_allowed ID LPAR f_args RPAR {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-                check_return=false;
         }
     | VOID ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
@@ -508,7 +506,6 @@ func: pt_allowed ID LPAR f_args RPAR {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-                check_return=false;
         }
     | BTREE LT pt_allowed GT ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
@@ -543,7 +540,6 @@ func: pt_allowed ID LPAR f_args RPAR {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-                check_return=false;
         }
     | BSTREE LT pt_allowed GT ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
@@ -608,9 +604,7 @@ func: pt_allowed ID LPAR f_args RPAR {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-        check_return=false;
         }
-
     | VOID ID LPAR RPAR {
         args_listn.clear();
         args_listt.clear();
@@ -675,7 +669,6 @@ func: pt_allowed ID LPAR f_args RPAR {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-                check_return=false;
         }
     | BTREE LT pt_allowed GT ID LPAR RPAR {
         args_listn.clear();
@@ -712,7 +705,6 @@ func: pt_allowed ID LPAR f_args RPAR {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-                check_return=false;
         }
     | BSTREE LT pt_allowed GT ID LPAR RPAR {
         args_listn.clear();
@@ -749,7 +741,6 @@ func: pt_allowed ID LPAR f_args RPAR {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
                         exit(1);
                 }
-                check_return=false;
         }
         ;
 
@@ -1200,70 +1191,6 @@ inpt_rhs: predicate {
                 $$.type = $1.type;
                 $$.text=$1.text;
         }
-        | ID DOT LEFT {
-                symTabEnt temp = search_symTab($1, scope);
-                string pqr;
-                if(temp) {
-                        pqr = temp->type;
-                        if(pqr.substr(0, 4)!="Node") {
-                                cout<<"Semantic Error at line number "<<yylineno<<": LHS is not compatible"<<endl;
-                                exit(1); 
-                        }
-                }
-                else {
-                        cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
-                        exit(1);
-                }
-                $$.type=pqr.c_str();
-                char* str = (char*)malloc(strlen($1)+strlen("->left")+1);
-                strcpy(str, $1);
-                strcat(str, "->left");
-                $$.text = str;
-        }
-        | ID DOT RIGHT {
-                symTabEnt temp = search_symTab($1, scope);
-                string pqr;
-                if(temp) {
-                        pqr = temp->type;
-                        if(pqr.substr(0, 4)!="Node") {
-                                cout<<"Semantic Error at line number "<<yylineno<<": LHS is not compatible"<<endl;
-                                exit(1); 
-                        }
-                }
-                else {
-                        cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
-                        exit(1);
-                }
-                $$.type=pqr.c_str();
-                char* str = (char*)malloc(strlen($1)+strlen("->right")+1);
-                strcpy(str, $1);
-                strcat(str, "->right");
-                $$.text = str;
-        }
-        | ID DOT VAL {
-                symTabEnt temp = search_symTab($1, scope);
-                string pqr;
-                if(temp) {
-                        pqr = temp->type;
-                        if(pqr.substr(0, 4)!="Node") {
-                                cout<<"Semantic Error at line number "<<yylineno<<": LHS is not compatible"<<endl;
-                                exit(1); 
-                        }
-                }
-                else {
-                        cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
-                        exit(1);
-                }
-                size_t start = pqr.find('<');
-                size_t end = pqr.find('>');
-                string s= pqr.substr(start+1,end-start-1);
-                $$.type=s.c_str();
-
-                char* str = (char*)malloc(strlen($1)+strlen("->val")+1);
-                strcpy(str, $1);
-                strcat(str, "->val");
-                $$.text = str;
-        }
         ;
 
 predicate: conditions {
@@ -1336,7 +1263,6 @@ condition: con_posm {
          ;
 
 con_posm: con_pos {
-
                 $$.type = $1.type;
                 $$.text=$1.text;
         }
@@ -1445,6 +1371,7 @@ acon_posm: acon_pos acond {
                         }
                         $$.type = final_type($1.type, $2.type).c_str();
                 }
+                
                 char* str = (char*)malloc(strlen($2.text)+strlen($1.text)+1);
                 strcpy(str, $1.text);
                 strcat(str, $2.text);
@@ -1510,11 +1437,11 @@ acon_pos: ID {
                 $$.text=$1;
         } 
         | func_call {
-                // string s1=$1.type;
-                // if(s1 == "void"){
-                //         cout<<"Semantic Error at line number "<<yylineno<<": Cannot do operations on void datatype"<<endl;
-                //         exit(1);
-                // }
+                string s1=$1.type;
+                if(s1 == "void"){
+                        cout<<"Semantic Error at line number "<<yylineno<<": Cannot do operations on void datatype"<<endl;
+                        exit(1);
+                }
                 $$.type=$1.type;
 
                 $$.text=$1.text;
