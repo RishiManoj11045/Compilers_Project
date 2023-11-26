@@ -474,7 +474,9 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listt.clear();
 
         fprintf(fir,"void %s(%s)",$2,$4.text);
-        } block 
+        } block {
+                check_return=false;
+        }
     | NODE LT pt_allowed GT ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
                 for(int j=i+1;j<args_listn.size();j++){
@@ -573,7 +575,13 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listt.clear();
 
         fprintf(fir,"BSTree<%s> %s(%s)\n",$3.text,$5,$7.text);
-        } block 
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
         | pt_allowed ID LPAR RPAR { 
         args_listn.clear();
         args_listt.clear();
@@ -639,7 +647,9 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listt.clear();
 
         fprintf(fir,"void %s()",$2);
-        } block 
+        } block {
+                check_return=false;
+        }
     | NODE LT pt_allowed GT ID LPAR RPAR {
         args_listn.clear();
         args_listt.clear();
