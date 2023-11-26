@@ -537,7 +537,7 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listn.clear();
         args_listt.clear();
 
-        fprintf(fir,"BTree<%s> %s(%s);\n",$3.text,$5,$7.text);
+        fprintf(fir,"BTree<%s> %s(%s)\n",$3.text,$5,$7.text);
         } block {
                 if(check_return == false) {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
@@ -572,7 +572,7 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listn.clear();
         args_listt.clear();
 
-        fprintf(fir,"BSTree<%s> %s(%s);\n",$3.text,$5,$7.text);
+        fprintf(fir,"BSTree<%s> %s(%s)\n",$3.text,$5,$7.text);
         } block 
         | pt_allowed ID LPAR RPAR { 
         args_listn.clear();
@@ -669,7 +669,7 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listn.clear();
         args_listt.clear();
 
-        fprintf(fir,"Node<%s> %s();\n",$3.text,$5);
+        fprintf(fir,"Node<%s> %s()\n",$3.text,$5);
         } block {
                 if(check_return == false) {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
@@ -706,7 +706,7 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listn.clear();
         args_listt.clear();
 
-        fprintf(fir,"BTree<%s> %s();\n",$3.text,$5);
+        fprintf(fir,"BTree<%s> %s()\n",$3.text,$5);
         } block {
                 if(check_return == false) {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
@@ -743,7 +743,7 @@ func: pt_allowed ID LPAR f_args RPAR {
         args_listn.clear();
         args_listt.clear();
 
-        fprintf(fir,"BTree<%s> %s();\n",$3.text,$5);
+        fprintf(fir,"BTree<%s> %s()\n",$3.text,$5);
         } block {
                 if(check_return == false) {
                         cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
@@ -1281,7 +1281,7 @@ conditions: NEG conditions {
           | condition cond {
                 string s1=$2.type;
                 if(s1 == "") {
-                        $$.type = $1.type;        
+                        $$.type = $1.type;  
                 }
                 else {
                         $$.type = $2.type;
@@ -1435,6 +1435,14 @@ acon_posm: acon_pos acond {
 
                 }
                 else {
+                        string yt=$2.text;
+
+                        if(yt[0]=='%'){
+                                if(!((ss1=="int"||ss1=="long")&&(ss2=="int"||ss2=="long"))){
+                                       cout<<"Semantic Error at line number "<<yylineno<<": Invalid type for Modulo Operators"<<endl;
+                                       exit(1); 
+                                }
+                        }
                         if(!((ss2=="int"||ss2=="float"||ss2=="double"||ss2=="long")&&(ss1=="int"||ss1=="float"||ss1=="double"||ss1=="long"))){
                                 cout<<"Semantic Error at line number "<<yylineno<<": Invalid type for Arithmetic Operations"<<endl;
                                 exit(1); 
@@ -1454,7 +1462,6 @@ acon_posm: acon_pos acond {
 
 acond: aops acon_posm {
                 $$.type = $2.type;
-
                 char* str = (char*)malloc(strlen($2.text)+strlen($1.text)+strlen("  ")+1);
                 strcpy(str, $1.text);
                  strcat(str, " ");
