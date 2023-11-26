@@ -196,7 +196,7 @@ marker: {
         insert_functab("mergeBTree",1,{"BTree","BTree"},"BTree");
         insert_functab("search",1,{"Node"},"Node");
         insert_functab("insert",1,{"Node"},"bool");
-        insert_functab("delete",1,{"Node"},"Node");
+        insert_functab("deleteN",1,{"Node"},"Node");
         create_symtab(scope);
      }
      ;
