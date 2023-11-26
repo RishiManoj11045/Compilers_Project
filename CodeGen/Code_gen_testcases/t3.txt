@@ -1,0 +1,23 @@
+main() {
+    Node<int> a = {1, null, null};
+    BTree<int> b1 = {2, null, 3};
+    BSTree<int> c = {4, 5, 8, 10, 15};
+    Node<int> b;
+    int i=0;
+    b = b1.search(a);
+    while(i<0){
+        for(int j=0;j<90;j++){
+            {
+                {
+                    {
+                        int t=0;
+                    }
+                    {
+                        int t=0;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}

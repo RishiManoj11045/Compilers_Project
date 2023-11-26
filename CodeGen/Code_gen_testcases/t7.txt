@@ -1,0 +1,39 @@
+int add(int,int);
+void printMessage();
+int add(int a, int b) {
+    {
+        {
+            int var=8;
+        }
+    }
+    int c;
+    c = a + b;
+    return c;
+}
+
+int loop();
+int loop() {
+    Node<int> a = {1, null, null};
+    Node<int> b = {2, a, null};
+    int x = 1;
+    int y = 2;
+    while (x <= y) {
+        x = x + 3;
+        y = y + 1;
+    }
+    int d; 
+    d = x + y;        
+    return d;
+}
+
+void printMessage() {
+    output: "Compiler Project: TreeSL" << end;
+}
+
+main() {
+    loop();
+    int y;
+    int d;
+    printMessage();
+    return 1;
+}

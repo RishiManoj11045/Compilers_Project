@@ -1,0 +1,21 @@
+main(){
+    BSTree<int> c={1,23,45,5};
+    Node<float> a={8.78,null,null};
+    Node<float> q1={4.98,null,null};
+    BTree<int> b1,b2, b3;
+
+    BSTree<int> c1,c2, c3;
+    BSTree<float> d={1,2.09,45.99,5};
+    d.preorder();
+    c.search(q1);  #Semantic Error :Argument and Caller value types mismatch
+
+    b1.mergeBTree(b1,b2);
+    int x,y;
+    if(x<y){
+        c.postorder();
+    }
+    else{
+        output :x<<end;
+    }
+    return 0;
+}

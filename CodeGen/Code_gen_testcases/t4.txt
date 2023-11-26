@@ -1,0 +1,28 @@
+main() {
+    Node<int> a1;
+    Node<int> abr={1,null,null};
+    Node<int> n1={1,a1,null};
+
+    BSTree<int> cbst={1,23,45,5};
+
+    BTree<int> b1,b2, b3;
+
+    BSTree<int> c1,c2, c3;
+
+    n1=cbst.search(abr);
+    
+    b2={1, null,34,21,45,5};    
+    
+    n1={1,null,null};
+    n1.val=100;
+    n1.left=a1;
+    n1.right=null;
+    
+    c3={21};
+    cbst={21,45,5};    
+    c2={34,4,78,96,3};
+
+    cbst.insert(n1);
+
+    return 0;
+}

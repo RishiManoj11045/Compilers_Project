@@ -1,0 +1,18 @@
+ int x = 5;
+    int y = 3;
+    int z = x ;
+    z = z + y; 
+    if (z > 5.0) { #Syntax Error: If condition is declared outside the main Function
+        x = x * 2;
+        break;
+    } else {
+        y = y + 1;
+    }
+    int index = 1;
+    int value = x ;
+
+
+main(){
+    return 1;
+}
+   

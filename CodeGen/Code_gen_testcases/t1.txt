@@ -1,0 +1,53 @@
+int abc(int , float,bool,Node<int>,BTree<float>,BSTree<float> );
+
+int abc(int a, float b,bool f,Node<int> d,BTree<float> c,BSTree<float> u){
+    return 1;
+}
+
+int Fooo(int, float, Node<int>);
+
+int Fooo(int a, float b, Node<int> c) {
+    return 0;
+}
+
+
+main() {
+    int a,b,c;
+    output: a<<b+c<<end;
+    Node<int> abr;
+    Node<int> a1,a2,a3,a34;
+
+    BTree<int> b1;
+    BTree<int> b2, b3, b7;
+
+    BSTree<int> c1;
+    BSTree<int> c2, c3, c7;
+
+    int arr[50];
+    Node<int> ar[10];
+    int w1=a;
+
+    #int d1=1+2;
+
+    Node<int> n1={1,a1,null};
+
+    BTree<int> bt={1,null,98,50,null};
+
+    BSTree<int> cbst={1,23,45,5};
+    
+    Fooo(a, 1.0, n1);
+
+    Foo1();   #Semantic Error - Function is not declared
+
+    string str = "Hi";
+
+    str = "Hello";
+
+    a++;
+    a;
+
+    BTree<int> b2, b3, b7;
+
+    output: a<<end;
+    return 0;
+}
