@@ -999,12 +999,13 @@ intialisation_stmt: intialisation SEMICOLON {
         ;
 
 intialisation: pt_allowed ID EQUAL inpt_rhs {
+                        string s1=$4.type;
                         symTabEnt temp = search_symTab_scope($2, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
                         }
-                        if(!compatibility($1.type,$4.type)){
+                        if(!compatibility($1.type,s1)){
                                 cout<<"Semantic Error at line number "<<yylineno<<": Type Mismatch\n";
                                 exit(1);
                         }
@@ -1279,7 +1280,7 @@ conditions: NEG conditions {
                 $$.text= str.c_str();
         }// Defining conditions production with possible types of conditions
           | condition cond {
-                string s1=$2.type;
+                const char* s1=$2.type;
                 if(s1 == "") {
                         $$.type = $1.type;  
                 }
