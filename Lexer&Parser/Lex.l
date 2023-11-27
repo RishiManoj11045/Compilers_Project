@@ -11,6 +11,7 @@ int HandleOps(char* str);
 int HandlePunc(char* str);
 int HandleDatatypes(char* str);
 int HandleKeyWords(char* str);
+void HandleComments(char* str);
 
 %}
 
@@ -29,12 +30,12 @@ multiline_comments #\*([^*]|[*][^#]|\n)*\*#
 comments ({multiline_comments}|{single_line_comments})
 
 /*Matches identifiers that can start with an optional special character followed by alphanumeric characters*/
-identifier [A-Za-z$_~][A-Za-z0-9$_~]*
+identifier [A-Za-z_][A-Za-z0-9_]*
 
-na_id   [0-9]+[A-Za-z0-9$_~]+
+na_id   [0-9]+[A-Za-z0-9_]+
 
 /*Matches reserved keywords*/
-reserved_key ("if"|"else"|"return"|"break"|"continue"|"null"|"for"|"while"|"true"|"false"|"and"|"or")
+reserved_key ("main"|"if"|"else"|"return"|"break"|"continue"|"null"|"for"|"while"|"true"|"false"|"and"|"or"|"end"|"input"|"output"|"left"|"right"|"val")
 
 /*Matches data types like "integer_", "character_", "string", or "null"*/
 p_datatype ("int"|"float"|"char"|"string"|"bool"|"void"|"double"|"long")
@@ -44,7 +45,7 @@ np_datatype ("Node"|"BSTree"|"BTree")
 datatype   ({p_datatype}|{np_datatype})
 
 /*Matches punctuation characters*/
-punctuation [,;"'.\(\)\[\]\{\}]
+punctuation [:,;"'.\(\)\[\]\{\}]
 
 /*Matches a string enclosed in double quotes*/
 string  \"[^"]*\"
@@ -64,37 +65,44 @@ decimal_number  (-?[0-9]+)
 constant     ({decimal_number}|{character}|{string}|{floating_point})
 
 /*Matches operators containing spaces, followed by one of {-, =, +, *, /, _} and then more spaces*/
-operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|"|"|"^")
+operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|"|"|"^"|"<<")
 
 %%
 
-\n                 {yylineno++;} // Handle newline character
+\n                 {yylineno++;
+                    } // Handle newline character
 
-{comments}         {/* */;}
+{comments}         {
+                    HandleComments(yytext);}
 
 {space}            {/* */;} // Handle spaces and tabs
 
 {operator}         {fprintf(fswrite, "operator: %s\n", yytext);
-                    HandleOps(yytext);}
+                    return HandleOps(yytext);}
 
 {punctuation}      {fprintf(fswrite, "punctuation: %s\n", yytext);
-                    HandlePunc(yytext);}
+                    return HandlePunc(yytext);}
 
 {datatype}         {fprintf(fswrite, "datatype: %s\n", yytext);
-                    HandleDatatypes(yytext);} // Call HandleDatatypes function for data types handling
+                    return HandleDatatypes(yytext);} // Call HandleDatatypes function for data types handling
 
 {reserved_key}     {fprintf(fswrite, "reserved keyword: %s\n", yytext);
-                    HandleKeyWords(yytext);} // Call HandleKeyWords function for reserved keywords
+                    return HandleKeyWords(yytext);} // Call HandleKeyWords function for reserved keywords
 
-{constant}         {HandleConst(yytext);} // Call HandleConst function for constants
+{constant}         {return HandleConst(yytext);} // Call HandleConst function for constants
 
-{identifier}       {fprintf(fswrite, "ID: %s\n", yytext);} // Return token type ID for identifiers
+{identifier}       {fprintf(fswrite, "ID: %s\n", yytext);
+                        return ID;} // Return token type ID for identifiers
 
-.|{na_id}           {fprintf(fswrite, "Lexical Error for %s at line number: %d\n", yytext, yylineno);
+.|{na_id}           {printf("Lexical Error for %s at line number: %d\n", yytext, yylineno);
                     fclose(fsread);
                     fclose(fswrite);
                     exit(1);} // Handle lexical errors
 %%
+
+int yywrap() {
+    return 1;
+}
 
 int HandleConst(char* str) {
     if(str[0] == '"') {
@@ -145,7 +153,7 @@ int HandleOps(char* str) {
     else if(strcmp(str, "/") == 0) {
         return DIV;
     }
-    else if(strcmp(str, "%%") == 0) {
+    else if(strcmp(str, "%") == 0) {
         return MOD;
     }
     else if(strcmp(str, "++") == 0) {
@@ -187,6 +195,9 @@ int HandleOps(char* str) {
     else if(strcmp(str, "^") == 0) {
         return LXOR;
     }
+    else if(strcmp(str, "<<") == 0) {
+        return LL;
+    }
     return 1;
 }
 
@@ -217,6 +228,9 @@ int HandlePunc(char* str) {
     }
     else if(strcmp(str, "}") == 0) {
         return RFB;
+    }
+    else if(strcmp(str, ":") == 0) {
+        return COLON;
     }
     return 1;
 }
@@ -295,5 +309,37 @@ int HandleKeyWords(char* str) {
     else if(strcmp(str, "or") == 0) {
         return OR;
     }
+    else if(strcmp(str, "end") == 0) {
+        return END;
+    }
+    else if(strcmp(str, "input") == 0) {
+        return INPUT;
+    }
+    else if(strcmp(str, "output") == 0) {
+        return OUTPUT;
+    }
+    else if(strcmp(str, "left") == 0) {
+        return LEFT;
+    }
+    else if(strcmp(str, "right") == 0) {
+        return RIGHT;
+    }
+    else if(strcmp(str, "val") == 0) {
+        return VAL;
+    }
+    else if(strcmp(str, "main") == 0) {
+        return MAIN;
+    }
     return 1;
+}
+
+void HandleComments(char* str){
+    int i=0;
+    char* s = str;
+    while(str[i]!='\0'){
+        if(str[i]=='\n'){
+            yylineno++;
+            }
+        i++;
+    }
 }
