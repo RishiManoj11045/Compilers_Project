@@ -1,0 +1,22 @@
+main() {
+    Node<int> a1;
+    Node<int> abr={1,null,null};
+    Node<int> n1={1,a1,null};
+
+    BSTree<int> cbst={1,23,45,5};
+    
+    BTree<int> b2={1, null,34,21,45,5};    
+    
+    n1={1,null,null};
+    n1.val=100;
+    n1.left=a1;
+    n1.right=null;
+      
+    cbst.insert(n1);
+
+    cbst.preorder();
+
+    cbst.bfs();
+
+    return 0;
+}

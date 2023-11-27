@@ -1,0 +1,27 @@
+int a = 0;
+a = 1;
+
+main() {
+    Node<int> a = {1, null, null};
+    BTree<int> b1 = {1, null, 3};
+    BSTree<int> c = {4, 5, 8, 10, 15};
+    Node<int> b;
+    int i=0;
+    b = b1.search(a);
+    while(i<0){
+
+        int j = 0;
+        while(j<90){
+            {
+                {
+                    {
+                        int t=0;
+                        j++;
+                    }
+                }
+            }
+        }
+    }
+    int d = a.val;
+    return 0;
+}

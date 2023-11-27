@@ -1,0 +1,27 @@
+main(){
+    BSTree<int> c={1, 100, 9};
+    BTree<int> b1,b2, b3;
+
+    BSTree<int> c1,c2, c3;
+    c.preorder();
+
+    Node<int> n1 = {1, null, null};
+
+    Node<int> n2 = {2, n1, null};
+
+    b1.insert(n1);
+    b2.insert(n2);
+
+    b1.mergeBTree(b1,b2);
+    
+    int a = 0;
+    {
+        if(a < 1) {
+            b1.postorder();
+        }
+        else {
+            b2.preorder();
+        }
+    }
+    return 0;
+}

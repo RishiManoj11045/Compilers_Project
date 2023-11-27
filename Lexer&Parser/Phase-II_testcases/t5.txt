@@ -1,0 +1,30 @@
+int add(int,int);
+void printMessage();
+int add(int a, int b) {
+    {
+        {
+            int var=8;
+        }
+    }
+    int c;
+    c = a + b;
+    return c;
+}
+
+void printMessage() {
+    output: "Compiler Project: TreeSL" << end;
+}
+
+main() {
+    int y;
+    int d;
+   BTree<int> bt={1,98,50,null};  
+    BSTree<int> bst={78,34,1,23,445,4};
+    BSTree<int> bst1={8,4,3,4,65,87};
+    {
+      for(int i=0; i<5; i++) {
+         printMessage();
+      }
+    }
+    return 1;
+}

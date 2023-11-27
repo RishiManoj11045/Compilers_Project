@@ -1,0 +1,16 @@
+bool tree_func();
+bool tree_func(){
+      Node<int> node1 = {3,null,null};
+      Node<int> node2 = {8,node1,null};
+
+      BTree<int> tree1 = {1,8,3,7};
+      BSTree<int> tree2 = {8,null,3,9,4}; #Syntax Error : Cannot intialize with null in BSTree
+      
+      tree2.insert(node1);
+      tree1.delete(node1);
+      return true;
+}
+main(){
+    tree_func();
+    return 0;
+}

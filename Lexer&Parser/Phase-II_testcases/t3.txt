@@ -1,0 +1,20 @@
+int Foo(BTree<int> , Node<int>);
+
+int Foo(BTree<int> a,Node<int> c) {
+    Node<int> n1;
+
+    a->search(n1); #Syntax Error: wrong way to access method function
+    return 1;
+}
+
+main(){
+    output: 1<<end;
+
+    Node<int> n1 = {2, null, null};
+    Node<int> node1 = {3,null,null};
+    Node<int> node2 = {8,node1,null};
+
+    BTree<int> b1 = {1, null, 2};
+    Foo(b1, n1);
+    return 1;
+}
