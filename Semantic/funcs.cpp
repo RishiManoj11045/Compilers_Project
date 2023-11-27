@@ -156,7 +156,7 @@ funcTabEnt search_functab_builtin(string name,bool built_in,vector<string> param
                         return i;
                     }
                 }
-                else if(i-> name == "delete") {
+                else if(i-> name == "deleteN") {
                     if(param_list.size()==1 && param_list[0].substr(0, 4)=="Node") {
                         size_t start = param_list[0].find('<');
                         size_t end = param_list[0].find('>');
@@ -272,7 +272,3 @@ string bt_final_type(string a,string b){
     string s = "";
     return s;
 }
-
-
-
-
