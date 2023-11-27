@@ -14,8 +14,9 @@ int scope = 0;
 vector<string> vec;
 vector<vector<symTabEnt>> symTab_list;
 vector<funcTabEnt> funcTab;
-
+bool p=true;
 int find_loop = 0;
+bool check_return = false;
 
 vector<string> param_list;
 vector<string> args_listt;
@@ -25,21 +26,23 @@ vector<string> call_list;
 string ret_type;
 string assn_idtype="";
 vector<string> v;
+char modulo='@';
 
 int yylex(void); // Declare the lexer function
 void yyerror(const char* msg); // Declare the error handling function
 %}
 
 %union {
-        const char* type;
         const char* name;
+        const char* type;
 }
 
 %token <name> ID
-%token LPAR
-%token RPAR
-%token LT
-%token GT
+%token NUMBER
+%token STRINGC
+%token CHARC
+%token DECIMAL
+%token FLOATING
 %token <type> INT
 %token <type> FLOAT
 %token <type> CHAR
@@ -48,6 +51,10 @@ void yyerror(const char* msg); // Declare the error handling function
 %token <type> DOUBLE
 %token <type> LONG
 %token <type> VOID
+%token LPAR
+%token RPAR
+%token LT
+%token GT
 %token NODE
 %token BTREE
 %token BSTREE
@@ -57,7 +64,6 @@ void yyerror(const char* msg); // Declare the error handling function
 %token SEMICOLON
 %token LSB
 %token RSB
-%token NUMBER
 %token EQUAL
 %token AND
 %token OR
@@ -68,15 +74,11 @@ void yyerror(const char* msg); // Declare the error handling function
 %token LEQ
 %token NE
 %token EQ
-%token STRINGC
-%token CHARC
 %token ADD
 %token SUB
 %token MUL
 %token DIV
 %token MOD
-%token DECIMAL
-%token FLOATING 
 %token DOT
 %token BREAK
 %token CONTINUE
@@ -102,16 +104,16 @@ void yyerror(const char* msg); // Declare the error handling function
 %token MAIN
 
 %type <type> pt_allowed 
-%type <type> inpt_rhs
-%type <type> predicate
-%type <type> n_par
 %type <type> bt_parm
 %type <type> bt_par
 %type <type> bst_parm
-%type <type> expr
-%type <type> exprt
+%type <type> n_par
+%type <type> inpt_rhs
+%type <type> predicate
 %type <type> conditions
 %type <type> condition
+%type <type> expr
+%type <type> exprt
 %type <type> acon_pos
 %type <type> acon_posm
 %type <type> con_pos
@@ -119,7 +121,6 @@ void yyerror(const char* msg); // Declare the error handling function
 %type <type> acond
 %type <type> cond
 %type <type> func_call
-%type <type> call_args
 
 %right NEG
 %right INCR
@@ -169,12 +170,18 @@ marker: {
         insert_functab("mergeBTree",1,{"BTree","BTree"},"BTree");
         insert_functab("search",1,{"Node"},"Node");
         insert_functab("insert",1,{"Node"},"bool");
-        insert_functab("delete",1,{"Node"},"Node");
+        insert_functab("deleteN",1,{"Node"},"Node");
         create_symtab(scope);
      }
      ;
      
-main: MAIN LPAR RPAR block
+main: MAIN LPAR RPAR {ret_type = "int";} block {
+                                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                        check_return=false;
+                        }
     ;
 
 program: /* */
@@ -217,6 +224,7 @@ func_dec: pt_allowed ID LPAR func_args RPAR SEMICOLON {
                 string str = "Node<"+stemp+">";
                 insert_functab($5,0,param_list,str);
                 param_list.clear();
+
         }
         | BTREE LT pt_allowed GT ID LPAR func_args RPAR SEMICOLON {
                 if(search_functab($5,0,param_list))
@@ -299,7 +307,7 @@ func_dec: pt_allowed ID LPAR func_args RPAR SEMICOLON {
         ;
 
 pt_allowed: INT {
-               $$="int"; 
+               $$ = "int"; 
         }
           | FLOAT {
                $$="float"; 
@@ -321,8 +329,8 @@ pt_allowed: INT {
         }
           ;
 
-func_args: func_arg // Defining function arguments production
-         | func_args COMMA func_arg
+func_args: func_arg 
+         | func_args COMMA func_arg 
          ;
 
 
@@ -336,6 +344,7 @@ func_arg: pt_allowed {
         | BTREE LT pt_allowed GT {
                 string stemp = $3;
                 param_list.push_back("BTree<"+stemp+">");
+               
         }
         | BSTREE LT pt_allowed GT {
                 string stemp = $3;
@@ -368,7 +377,14 @@ func: pt_allowed ID LPAR f_args RPAR {
         ret_type=$1; 
         args_listn.clear();
         args_listt.clear(); 
-        } block 
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
     | VOID ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
                 for(int j=i+1;j<args_listn.size();j++){
@@ -393,7 +409,10 @@ func: pt_allowed ID LPAR f_args RPAR {
         ret_type="void";
         args_listn.clear();
         args_listt.clear();
-        } block 
+
+        } block {
+                check_return=false;
+        }
     | NODE LT pt_allowed GT ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
                 for(int j=i+1;j<args_listn.size();j++){
@@ -420,7 +439,14 @@ func: pt_allowed ID LPAR f_args RPAR {
 
         args_listn.clear();
         args_listt.clear();
-        } block
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
     | BTREE LT pt_allowed GT ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
                 for(int j=i+1;j<args_listn.size();j++){
@@ -447,7 +473,14 @@ func: pt_allowed ID LPAR f_args RPAR {
 
         args_listn.clear();
         args_listt.clear();
-        } block 
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
     | BSTREE LT pt_allowed GT ID LPAR f_args RPAR {
         for(int i=0;i<args_listn.size();i++){
                 for(int j=i+1;j<args_listn.size();j++){
@@ -474,7 +507,14 @@ func: pt_allowed ID LPAR f_args RPAR {
 
         args_listn.clear();
         args_listt.clear();
-        } block 
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
         | pt_allowed ID LPAR RPAR { 
         args_listn.clear();
         args_listt.clear();
@@ -502,7 +542,15 @@ func: pt_allowed ID LPAR f_args RPAR {
         ret_type=$1; 
         args_listn.clear();
         args_listt.clear(); 
-        } block 
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+        check_return=false;
+        }
+
     | VOID ID LPAR RPAR {
         args_listn.clear();
         args_listt.clear();
@@ -529,7 +577,10 @@ func: pt_allowed ID LPAR f_args RPAR {
         ret_type="void";
         args_listn.clear();
         args_listt.clear();
-        } block 
+
+        } block {
+                check_return=false;
+        }
     | NODE LT pt_allowed GT ID LPAR RPAR {
         args_listn.clear();
         args_listt.clear();
@@ -558,7 +609,14 @@ func: pt_allowed ID LPAR f_args RPAR {
 
         args_listn.clear();
         args_listt.clear();
-        } block 
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
     | BTREE LT pt_allowed GT ID LPAR RPAR {
         args_listn.clear();
         args_listt.clear();
@@ -587,7 +645,14 @@ func: pt_allowed ID LPAR f_args RPAR {
 
         args_listn.clear();
         args_listt.clear();
-        } block 
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
     | BSTREE LT pt_allowed GT ID LPAR RPAR {
         args_listn.clear();
         args_listt.clear();
@@ -616,12 +681,19 @@ func: pt_allowed ID LPAR f_args RPAR {
 
         args_listn.clear();
         args_listt.clear();
-        } block 
+
+        } block {
+                if(check_return == false) {
+                        cout<<"Semantic Error at line number "<<yylineno<<": No return statement in main scope block\n";
+                        exit(1);
+                }
+                check_return=false;
+        }
         ;
 
 
 f_args: f_arg 
-         | f_args COMMA f_arg
+         | f_args COMMA f_arg 
          ;
 
 f_arg: pt_allowed ID {
@@ -630,13 +702,13 @@ f_arg: pt_allowed ID {
         }
         | NODE LT pt_allowed GT ID {
                 string stemp = $3;
-                args_listt.push_back("Node"+stemp+">");
+                args_listt.push_back("Node<"+stemp+">");
                 args_listn.push_back($5);
         }
         | BTREE LT pt_allowed GT ID {
                 string stemp = $3;
                 args_listt.push_back("BTree<"+stemp+">");
-                args_listn.push_back($5);  
+                args_listn.push_back($5);
         }
         | BSTREE LT pt_allowed GT ID {
                 string stemp = $3;
@@ -677,7 +749,7 @@ statement: declaration_stmt // Defining statement production with all types of v
          | block
          ;
 
-declaration_stmt: declaration SEMICOLON
+declaration_stmt: declaration SEMICOLON 
                 ;
 
 declaration: pt_allowed id_list {
@@ -690,7 +762,7 @@ declaration: pt_allowed id_list {
                         }
                         insert_symTab(i, $1, scope);
                     }
-                    vec.clear();    
+                    vec.clear();  
                 }
            | NODE LT pt_allowed GT id_list {
                     symTabEnt temp = NULL;
@@ -742,8 +814,8 @@ declaration: pt_allowed id_list {
                         exit(1);
                     }
                     string stemp = $1;
-                    string str = stemp + "[]";
-                    insert_symTab($2, str, scope);
+                    string pqr = stemp + "[]";
+                    insert_symTab($2, pqr, scope);
                 }
            | NODE LT pt_allowed GT ID LSB NUMBER RSB {
                     symTabEnt temp = NULL;
@@ -753,8 +825,8 @@ declaration: pt_allowed id_list {
                         exit(1);
                     }
                     string stemp = $3;
-                    string str = "Node<" + stemp + ">[]";
-                    insert_symTab($5, str, scope);
+                    string pqr = "Node<" + stemp + ">[]";
+                    insert_symTab($5, pqr, scope);
                 }
            ;
 
@@ -764,20 +836,21 @@ id_list: ID {
         }
        | id_list COMMA ID {
                 string temp = $3;
-                vec.push_back(temp); 
-       }
+                vec.push_back(temp);
+        }
        ;
 
-intialisation_stmt: intialisation SEMICOLON
+intialisation_stmt: intialisation SEMICOLON 
                   ;
 
 intialisation: pt_allowed ID EQUAL inpt_rhs {
+                        string s1=$4;
                         symTabEnt temp = search_symTab_scope($2, scope);
                         if(temp) {
                                 cout<<"Semantic Error at line number "<<yylineno<<": Variable has already been declared"<<endl;
                                 exit(1);
                         }
-                        if(!compatibility($1,$4)){
+                        if(!compatibility($1,s1)){
                                 cout<<"Semantic Error at line number "<<yylineno<<": Type Mismatch\n";
                                 exit(1);
                         }
@@ -872,7 +945,7 @@ bt_par: predicate {
                 $$ = $1;
         }
       | LNULL {
-                $$ = "null";
+                $$= "null";
       }
       ;
 
@@ -881,11 +954,11 @@ bst_parm: predicate COMMA bst_parm {
                         cout<<"Semantic Error at line number "<<yylineno<<": Type Mismatch\n";
                         exit(1);
                 }
-                string str = bt_final_type($1,$3);
-                $$=str.c_str();
+                string pqr = bt_final_type($1,$3);
+                $$=pqr.c_str();
         }
         | predicate {
-                $$ = $1;        
+                $$ = $1;   
         }
         ;
 
@@ -898,13 +971,64 @@ n_par: LNULL {
                         cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
                         exit(1);
                 }  
-                string s1 = temp->type;              
+                string s1 = temp->type;                              
                 $$ = s1.c_str();
      }
      ;
 
 inpt_rhs: predicate {
                 $$ = $1;
+        }
+        | ID DOT LEFT {
+                symTabEnt temp = search_symTab($1, scope);
+                string pqr;
+                if(temp) {
+                        pqr = temp->type;
+                        if(pqr.substr(0, 4)!="Node") {
+                                cout<<"Semantic Error at line number "<<yylineno<<": LHS is not compatible"<<endl;
+                                exit(1); 
+                        }
+                }
+                else {
+                        cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
+                        exit(1);
+                }
+                $$=pqr.c_str();
+        }
+        | ID DOT RIGHT {
+                symTabEnt temp = search_symTab($1, scope);
+                string pqr;
+                if(temp) {
+                        pqr = temp->type;
+                        if(pqr.substr(0, 4)!="Node") {
+                                cout<<"Semantic Error at line number "<<yylineno<<": LHS is not compatible"<<endl;
+                                exit(1); 
+                        }
+                }
+                else {
+                        cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
+                        exit(1);
+                }
+                $$=pqr.c_str();
+        }
+        | ID DOT VAL {
+                symTabEnt temp = search_symTab($1, scope);
+                string pqr;
+                if(temp) {
+                        pqr = temp->type;
+                        if(pqr.substr(0, 4)!="Node") {
+                                cout<<"Semantic Error at line number "<<yylineno<<": LHS is not compatible"<<endl;
+                                exit(1); 
+                        }
+                }
+                else {
+                        cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
+                        exit(1);
+                }
+                size_t start = pqr.find('<');
+                size_t end = pqr.find('>');
+                string s= pqr.substr(start+1,end-start-1);
+                $$=s.c_str();
         }
         ;
 
@@ -917,9 +1041,9 @@ conditions: NEG conditions {
                 $$ = "bool";
         }// Defining conditions production with possible types of conditions
           | condition cond {
-                string s1=$2;
+                const char* s1=$2;
                 if(s1 == "") {
-                        $$ = $1;        
+                        $$ = $1;  
                 }
                 else {
                         $$ = $2;
@@ -934,7 +1058,7 @@ cond: AND conditions {
                 $$ = "bool";
         }
     | LOR conditions {
-                $$ = "bool";
+                $$= "bool";
         }
     | LAND conditions {
                 $$ = "bool";
@@ -985,16 +1109,16 @@ con_posm: con_pos {
                 $$ = "bool";
         }
         | LFALSE {
-                $$ = "bool";
+                $$= "bool";
         }
         ;
 
 ops: LT // Defining comparison operators production with valid comparison operators allowed
-   | GT
+   | GT 
    | GEQ
    | LEQ
-   | NE
-   | EQ
+   | NE 
+   | EQ 
    ;
 
 con_pos: STRINGC {
@@ -1012,9 +1136,17 @@ acon_posm: acon_pos acond {
                 string ss1=$2;
                 string ss2=$1;
                 if(ss1 == "") {
-                        $$ = $1;        
+                        $$ = $1;  
+
                 }
-                else {
+                else { 
+                        if(modulo=='%'){
+                                if(!((ss1=="int"||ss1=="long")&&(ss2=="int"||ss2=="long"))){
+                                       cout<<"Semantic Error at line number "<<yylineno<<": Invalid type for Modulo Operators"<<endl;
+                                       exit(1); 
+                                }
+                                modulo = '@';
+                        }
                         if(!((ss2=="int"||ss2=="float"||ss2=="double"||ss2=="long")&&(ss1=="int"||ss1=="float"||ss1=="double"||ss1=="long"))){
                                 cout<<"Semantic Error at line number "<<yylineno<<": Invalid type for Arithmetic Operations"<<endl;
                                 exit(1); 
@@ -1024,6 +1156,8 @@ acon_posm: acon_pos acond {
                                 exit(1);
                         }
                         $$ = final_type($1, $2).c_str();
+
+
                 }
         }
         ;
@@ -1037,10 +1171,12 @@ acond: aops acon_posm {
      ;
 
 aops: ADD // Defining comparison operators production with valid comparison operators allowed
-    | SUB
-    | MUL
-    | DIV
-    | MOD
+    | SUB 
+    | MUL 
+    | DIV 
+    | MOD {
+        modulo = '%';
+    }
     ;
 
 acon_pos: ID {
@@ -1063,11 +1199,6 @@ acon_pos: ID {
                 $$="long";
         } 
         | func_call {
-                string s1=$1;
-                if(s1 == "void"){
-                        cout<<"Semantic Error at line number "<<yylineno<<": Cannot do operations on void datatype"<<endl;
-                        exit(1);
-                }
                 $$=$1;
         }
         | LPAR acon_posm RPAR {
@@ -1082,6 +1213,16 @@ func_call: ID LPAR call_args RPAR {
                         exit(1);
                 }
                 $$ = temp->ret_type.c_str();
+                }
+        | ID LPAR RPAR {
+                call_list.clear();
+                funcTabEnt temp = search_functab_compat($1,0,call_list);
+                if(!temp){
+                        cout<<"Semantic Error at line number "<<yylineno<<": Function is not declared"<<endl;
+                        exit(1);
+                }
+                string pqr = temp->ret_type;
+                $$ = pqr.c_str();
         }
          | ID DOT ID LPAR call_args RPAR  {
                  symTabEnt temp = search_symTab($1, scope);
@@ -1106,8 +1247,9 @@ func_call: ID LPAR call_args RPAR {
                                 
                                 $$ = var->ret_type.c_str();
                                 call_list.clear();
+
                         }
-         }
+        }
          | ID DOT ID LPAR RPAR  {
                         call_list.clear();
                  symTabEnt temp = search_symTab($1, scope);
@@ -1132,7 +1274,7 @@ func_call: ID LPAR call_args RPAR {
                                 $$ = var->ret_type.c_str();
                                 call_list.clear();
                         }
-         }
+        }
          ;
 
 call_args: call_args COMMA predicate {
@@ -1143,12 +1285,16 @@ call_args: call_args COMMA predicate {
                 }
          ;
 
-init_args: init_args COMMA init_arg
-         | init_arg
+init_args: init_args COMMA init_arg 
+         | init_arg 
          ;
 
-init_arg: inpt_rhs {init_list.push_back($1);}
-        | LNULL {init_list.push_back("null");}
+init_arg: inpt_rhs {
+                    init_list.push_back($1);
+                }
+        | LNULL {
+                    init_list.push_back("null");
+                }
         ;
 
 assignment: ID EQUAL {
@@ -1265,6 +1411,7 @@ s_marker: expr SEMICOLON {
                 }
                 assn_idtype="";
         }
+
 expr: inpt_rhs {
         $$=$1;
     }
@@ -1275,6 +1422,7 @@ expr: inpt_rhs {
                 size_t start = str.find('<');
                 size_t end = str.find('>');
                 string s= str.substr(start+1,end-start-1);
+                const char* f=s.c_str(); 
                 if(np_compat(s,init_list[0])) {
                         if(init_list[1]=="null" && init_list[2]=="null") {
                                 if(assn_idtype != "") {
@@ -1294,12 +1442,12 @@ expr: inpt_rhs {
                                 }
                         else if(((init_list[1]=="null") || (init_list[1] == ("Node<"+s+">"))) && ((init_list[2]=="null") || (init_list[2] == ("Node<"+s+">")))) {
                                 stemp = "Node<" + s + ">";
-                                $$ = stemp.c_str();       
+                                $$ = stemp.c_str();      
                         }
                         else if(np_compat(s, init_list[1]) && np_compat(s, init_list[2])){
                                 if(assn_idtype != "") {
                                         if(assn_idtype.substr(0, 6) == "BSTree") {
-                                               $$ = assn_idtype.c_str(); 
+                                               $$ = assn_idtype.c_str();
                                         }
                                         else {
                                                 stemp = "BTree<" + s + ">";
@@ -1309,7 +1457,7 @@ expr: inpt_rhs {
                                 }
                                 else {
                                         stemp = "BTree<" + s + ">";
-                                        $$ = stemp.c_str();
+                                        $$ = stemp.c_str();                              
                                 }
                         }
                         else if(((init_list[1]=="null") || np_compat(s, init_list[1])) && ((init_list[2]=="null") || np_compat(s, init_list[2]))) {
@@ -1326,43 +1474,42 @@ expr: inpt_rhs {
                       exit(1);  
                 }
         }   
-                else {
-                        string str=assn_idtype;
-                        size_t start = str.find('<');
-                        size_t end = str.find('>');
-                        string s = str.substr(start+1,end-start-1);
-                        bool a = false;
-                        for(auto i: init_list) {
-                                if(i == "null") {
-                                      a = true;  
-                                }
-                                else if(!np_compat(s, i)) {
-                                        cout<<"Semantic Error at line number "<<yylineno<<": Increment cannot be done to this type"<<endl;
-                                        exit(1);
-                                }
+        else {
+                string str=assn_idtype;
+                size_t start = str.find('<');
+                size_t end = str.find('>');
+                string s = str.substr(start+1,end-start-1);
+                bool a = false;
+                for(auto i: init_list) {
+                        if(i == "null") {
+                                a = true;  
                         }
-                        if(!a) {
-                                if(assn_idtype != "") {
-                                        if(assn_idtype.substr(0, 6) == "BSTree") {
-                                               $$ = assn_idtype.c_str(); 
-                                        }
-                                        else {
-                                                stemp = "BTree<" + s + ">";
-                                                $$ = stemp.c_str(); 
-                                        }
-
+                        else if(!np_compat(s, i)) {
+                                cout<<"Semantic Error at line number "<<yylineno<<": Increment cannot be done to this type"<<endl;
+                                exit(1);
+                        }
+                }
+                if(!a) {
+                        if(assn_idtype != "") {
+                                if(assn_idtype.substr(0, 6) == "BSTree") {
+                                        $$ = assn_idtype.c_str(); 
                                 }
                                 else {
                                         stemp = "BTree<" + s + ">";
-                                        $$ = stemp.c_str();
+                                        $$ = stemp.c_str();                
                                 }
                         }
                         else {
-                             stemp = "BTree<" + s + ">";
-                             $$ = stemp.c_str();   
+                                stemp = "BTree<" + s + ">";
+                                $$ = stemp.c_str();
                         }
-                } 
-                init_list.clear();
+                }
+                else {
+                        stemp = "BTree<" + s + ">";
+                        $$ = stemp.c_str();   
+                }
+        } 
+        init_list.clear();
     }
     | ID INCR {
          symTabEnt temp = search_symTab($1, scope);
@@ -1399,11 +1546,13 @@ expr: inpt_rhs {
     ;
 
 expression: exprt SEMICOLON {
-                $1;
+                p=true;
         }
-          ;
+        ;
 
-exprt: inpt_rhs {$$=$1;}
+exprt: inpt_rhs {
+            $$=$1;
+        }
      | ID INCR {
         symTabEnt temp = search_symTab($1, scope);
                 if(temp) {
@@ -1419,7 +1568,7 @@ exprt: inpt_rhs {$$=$1;}
                         cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
                         exit(1);
                 }
-     }
+        }
      | ID DECR {
         symTabEnt temp = search_symTab($1, scope);
                 if(temp) {
@@ -1438,33 +1587,42 @@ exprt: inpt_rhs {$$=$1;}
      }
      ;
 
-conditional_stmt: IF f_marker
-                | IF f_marker ELSE{scope++;
-                 create_symtab(scope);} loop_block
+conditional_stmt: f_marker
+                | f_marker ELSE{scope++;
+                 create_symtab(scope);
+                } loop_block
                 ;
 
-f_marker: LPAR predicate RPAR {scope++;
-                create_symtab(scope);} loop_block
+f_marker: IF LPAR predicate RPAR {scope++;
+                create_symtab(scope);
+                } loop_block
         ;
 
 loop_stmt: while_loop
          | for_loop
          ;
 
-while_loop: WHILE {
-           find_loop++;
-           scope++;
-           create_symtab(scope);
-         }LPAR predicate RPAR loop_block {find_loop--;}
+while_loop: while_marker LPAR predicate RPAR loop_block {find_loop--;}
           ;
 
-for_loop: FOR {
+while_marker: WHILE {
            find_loop++;
            scope++;
            create_symtab(scope);
-        } LPAR for_f SEMICOLON predicate SEMICOLON for_l RPAR loop_block {find_loop--;}
+         }
+         ;
+         
+for_loop: for_marker LPAR for_f SEMICOLON predicate SEMICOLON for_l RPAR loop_block {find_loop--;}
+        |  for_marker LPAR for_f SEMICOLON predicate SEMICOLON  ID EQUAL t_marker RPAR loop_block {find_loop--;}
         ;
 
+for_marker: FOR {
+           find_loop++;
+           scope++;
+           create_symtab(scope);
+         }
+         ;
+         
 loop_block: LFB RFB {
                 delete_symEnt(scope);
                 scope--;
@@ -1502,16 +1660,19 @@ loop_statement: declaration_stmt // Defining statement production with all types
            create_symtab(scope);}loop_block
          ;
 
-for_f: declaration
+for_f: declaration 
      | intialisation 
-     | ID EQUAL {
+     | for_f_marker t_marker
+     ;
+
+for_f_marker: ID EQUAL {
         symTabEnt temp = search_symTab($1, scope);
         if(!temp) {
         cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
         exit(1);  
         }
         assn_idtype = temp->type;
-     } t_marker
+     } 
      ;
 
 t_marker: expr {
@@ -1522,17 +1683,8 @@ t_marker: expr {
         assn_idtype="";
      }
 
-for_l: ID EQUAL {
-        symTabEnt temp = search_symTab($1, scope);
-        if(!temp) {
-        cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
-        exit(1);  
-        }
-        assn_idtype = temp->type;
-     } t_marker
-     | predicate {$1;}
+for_l: predicate 
      | ID INCR {
-         $1;
          symTabEnt temp = search_symTab($1, scope);
                 if(temp) {
                         if(temp->type=="int" || temp->type=="long"||temp->type=="float" || temp->type=="double"){
@@ -1567,12 +1719,18 @@ for_l: ID EQUAL {
      ;
 
 return_stmt: RETURN predicate SEMICOLON {
+                if(scope == 1) {
+                        check_return = true;
+                }
                 if(!compatibility(ret_type,$2)) {
                         cout<<"Semantic Error at line number "<<yylineno<<": Return type mismatch"<<endl;
                         exit(1);
                 }
         }
            | RETURN SEMICOLON {
+                if(scope == 1) {
+                        check_return = true;
+                }
                 if(ret_type != "void") {
                         cout<<"Semantic Error at line number "<<yylineno<<": Return type mismatch"<<endl;
                         exit(1);
@@ -1592,18 +1750,18 @@ input_stmt: INPUT LPAR ID RPAR SEMICOLON  {
                         cout<<"Semantic Error at line number "<<yylineno<<": Use of undeclared variable"<<endl;
                         exit(1);
                 }
-                }
-          ;
+        }        
+        ;
 
-output_stmt: OUTPUT COLON print_posm SEMICOLON 
+output_stmt: OUTPUT COLON print_posm SEMICOLON
            ;
 
 print_posm: print_pos LL print_posm 
           | print_pos
           ;
 
-print_pos: predicate {$1;}
-         | END
+print_pos: predicate 
+         | END 
          ;
 
 %%
@@ -1611,10 +1769,17 @@ int yywrap(){
         return 0;
 } // Defining yywrap function (no action required)
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]){
     fsread = fopen(argv[1], "r"); // Open the input file
-    char s[20];
-    sprintf(s, "seq_tokens_%c.txt", argv[1][0]);
+    char str[50];
+    char s[100];
+    int i=0;
+    while(argv[1][i]!='.'){
+        str[i]=argv[1][i];
+        i++;
+    }
+    str[i]='\0';
+    sprintf(s, "seq_tokens_%s.txt",str);
     fswrite = fopen(s, "w"); // Open the token output file
     yyin = fsread; // Set the input file for the lexer
     yyparse(); // Start the parsing process
