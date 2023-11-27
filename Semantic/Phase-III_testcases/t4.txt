@@ -1,0 +1,22 @@
+int a = 0;
+
+Node<int> find(BTree<int>);
+
+Node<int> find(BTree<int> b) {
+    Node<int> c = {1, null, null};
+
+    c = b.search(c);
+    return c;
+}
+
+main(){
+    Node<int> n2 = {2, null, null};  
+
+    BTree<int> bt = {"Hi", 1, 2, null}; # Semantic Error: Type Mismatch
+    #Initialising values can either be null or of same or compatible type
+
+    bt.search(n2);
+
+    n2 = find(bt);
+    return 0;
+}

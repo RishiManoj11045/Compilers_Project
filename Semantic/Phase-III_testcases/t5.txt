@@ -1,0 +1,40 @@
+int d = 0;
+int Foo(BTree<int> , BSTree<int>);
+
+int Foo(BTree<int> a, BSTree<int> b) {
+    Node<int> n1;
+    Node<int> n2;
+    a.search(n1);
+    b.insert(n2);
+
+    return 1;
+}
+
+main() {
+    int e=0;
+    Node<int> a = {1, null, null};
+    Node<int> b = {2, a, null};
+    a.val = 5;
+    BTree<int> c1 = {8, null, 2,5,4,7,5};
+    BSTree<int> c2 = {1, 8, 9};
+    c1.bfs();
+    c2.dfs();
+    BSTree<int> mergedBST= {7,185,42,96,1};
+
+    c2.mergeBSTree(c2, mergedBST);
+
+    for(int i=0; i<5; i++) {
+        if(d == 1) {
+            d = e+5;
+            break;
+        }
+        else {
+            d = d + 2;
+            Foo(c1,c2);
+            continue;
+        }
+    }
+    input(d);
+    return 1;
+    output: d<<end<<d+e<<"Semantic Analysis"<<end;
+}

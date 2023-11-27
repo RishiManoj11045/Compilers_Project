@@ -1,0 +1,29 @@
+void merge(BTree<int> , BTree<int>);
+void merge(BTree<int> a, BTree<int> b) {
+    a.mergeBTree(a, b);
+}
+
+main() {
+    int e=0;
+    int d =0;
+
+    BTree<int> bt1 = {1, null, 2, 3};
+    BTree<int> bt2 = {1, 4, 2, 3};
+
+    for(int i=0; i<5; i++) {
+        d = d%i;
+        if(d == 1) {
+            d = e+5;
+            break;
+        }
+        else {
+            d = d + 2;
+            continue;
+        }
+    }
+
+    merge(bt1, bt2);
+    input(d);
+    output: d<<end<<d+e<<"Hi"<<end;
+    float result; 
+}
