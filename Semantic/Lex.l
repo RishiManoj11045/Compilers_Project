@@ -30,9 +30,9 @@ multiline_comments #\*([^*]|[*][^#]|\n)*\*#
 comments ({multiline_comments}|{single_line_comments})
 
 /*Matches identifiers that can start with an optional special character followed by alphanumeric characters*/
-identifier [A-Za-z$_~][A-Za-z0-9$_~]*
+identifier [A-Za-z_][A-Za-z0-9_]*
 
-na_id   [0-9]+[A-Za-z0-9$_~]+
+na_id   [0-9]+[A-Za-z0-9_]+
 
 /*Matches reserved keywords*/
 reserved_key ("main"|"if"|"else"|"return"|"break"|"continue"|"null"|"for"|"while"|"true"|"false"|"and"|"or"|"end"|"input"|"output"|"left"|"right"|"val")
@@ -69,9 +69,11 @@ operator ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"="|"=="|"!="|"!"|"<="|"<"|">="|">"|"&"|
 
 %%
 
-\n                 {yylineno++;} // Handle newline character
+\n                 {yylineno++;
+                    } // Handle newline character
 
-{comments}         {HandleComments(yytext);}
+{comments}         {
+                    HandleComments(yytext);}
 
 {space}            {/* */;} // Handle spaces and tabs
 
@@ -148,7 +150,7 @@ int HandleOps(char* str) {
     else if(strcmp(str, "/") == 0) {
         return DIV;
     }
-    else if(strcmp(str, "%%") == 0) {
+    else if(strcmp(str, "%") == 0) {
         return MOD;
     }
     else if(strcmp(str, "++") == 0) {
@@ -330,6 +332,7 @@ int HandleKeyWords(char* str) {
 
 void HandleComments(char* str){
     int i=0;
+    char* s = str;
     while(str[i]!='\0'){
         if(str[i]=='\n'){
             yylineno++;
